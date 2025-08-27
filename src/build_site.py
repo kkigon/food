@@ -122,7 +122,7 @@ def main():
       <div class="title" id="dateTitle"></div>
       <div id="content"></div>
     </div>
-    <footer>Powered by GitHub Pages · GitHub Actions · NEIS OpenAPI</footer>
+    <footer>Powered by GitHub Pages · GitHub Actions · NEIS OpenAPI · Copyright kkigon 2025.</footer>
   </div>
 
 <script>
