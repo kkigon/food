@@ -12,18 +12,23 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: meals-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0     # rebase하려면 히스토리 가져오기
 
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - name: Install deps
-        run: pip install -r requirements.txt
+      - run: pip install -r requirements.txt
 
       - name: Build JSON & HTML
         env:
@@ -32,10 +37,15 @@ jobs:
           NEIS_SCHOOL_CODE: ${{ secrets.NEIS_SCHOOL_CODE }}
         run: python src/build_site.py
 
-      - name: Commit & push
+      - name: Commit
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/meals.json docs/index.html
+          git add docs/
           git commit -m "chore: meals update $(date -u +'%Y-%m-%dT%H:%MZ')" || echo "No changes"
-          git push
+
+      - name: Rebase & push
+        run: |
+          git fetch origin main
+          git pull --rebase origin main   # 원격 위로 내 커밋을 얹기
+          git push origin HEAD:main
