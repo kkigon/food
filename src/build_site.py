@@ -98,6 +98,12 @@ def main():
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{school_name} 급식</title>
+<link rel="manifest" href="/food/manifest.webmanifest?v=1">
+<meta name="theme-color" content="#3a6bff">
+
+<!-- (iOS용 권장) 사파리 홈화면 아이콘 -->
+<link rel="apple-touch-icon" href="/food/icons/icon-192.png">
+
 <style>
   :root {{ --fg:#0b0b0b; --muted:#6a6a6a; --bg:#f6f8fb; --card:#fff; }}
   html,body {{ margin:0; background:var(--bg); color:var(--fg); font-family: system-ui, -apple-system, "Segoe UI", Roboto, Pretendard, "Noto Sans KR", sans-serif; }}
