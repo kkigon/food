@@ -1,0 +1,38 @@
+name: Build meals page
+
+on:
+  schedule:
+    # 모두 UTC (KST=UTC+9)
+    - cron: "20 20 * * *"  # 05:20 KST - 학교/다음날 데이터 미리 확보용
+    - cron: "40 23 * * *"  # 08:40 KST - 오전 방문자 대비
+    - cron: "20 3 * * *"   # 12:20 KST - 점심 직전
+    - cron: "20 8 * * *"   # 17:20 KST - 저녁 및 '내일 조식' 준비
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Build JSON & HTML
+        env:
+          NEIS_API_KEY: ${{ secrets.NEIS_API_KEY }}
+          NEIS_ATPT_CODE: ${{ secrets.NEIS_ATPT_CODE }}
+          NEIS_SCHOOL_CODE: ${{ secrets.NEIS_SCHOOL_CODE }}
+        run: python src/build_site.py
+
+      - name: Commit & push
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/meals.json docs/index.html
+          git commit -m "chore: meals update $(date -u +'%Y-%m-%dT%H:%MZ')" || echo "No changes"
+          git push
